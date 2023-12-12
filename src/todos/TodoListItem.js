@@ -1,22 +1,65 @@
 import React from 'react';
-import './TodoListItem.css';
+import styled from 'styled-components';
 
-const TodoListItem = ({ todo, onRemovedPressed, onCompletedPressed }) => (
-	<div className='todo-item-container'>
-		<h3>{todo.text}</h3>
-		<div className='buttons-container'>
-			{!todo.isCompleted && <button 
-				onClick={() => onCompletedPressed(todo._id)}
-				className='completed-button'>
-				Mark as completed
-			</button>}
-			<button 
-				onClick={() => onRemovedPressed(todo._id)}
-				className='remove-button'>
-				Remove
-			</button>
-		</div>
-	</div>
-);
+const TodoItemContainer = styled.div`
+	background: #fff;
+	border-radius: 8px;
+	margin-top: 8px;
+	padding: 16px;
+	position: relative;
+	box-shadow: 0 4px 8px grey;
+`;
+
+const TodoItemContainerWithWarning = styled(TodoItemContainer)`
+	border-bottom: ${props => (new Date(props.createdAt) > new Date(Date.now() - 864000 * 2) ? 'none' : '2px solid red')};
+`;
+
+const ButtonsContainer = styled.div`
+	position: absolute;
+	right: 12px;
+	bottom: 12px;
+`;
+
+const Button = styled.button`
+	font-size: 16px;
+	padding: 8px;
+	border: 1px black;
+	border-radius: 8px;
+	outline: none;
+	cursor: pointer;
+	display: inline-block;
+`;
+
+const CompletedButton = styled(Button)`
+	background-color: #00ff00;
+`;
+
+const RemoveButton = styled(Button)`
+	background-color: #ff0800;
+	margin-left: 8px;
+`;
+
+const TodoListItem = ({ todo, onRemovedPressed, onCompletedPressed }) => {
+
+	const Container = todo.isCompleted ? TodoItemContainer : TodoItemContainerWithWarning;
+	return (
+		<Container createdAt={todo.createdAt}>
+			<h3>{todo.text}</h3>
+			<p>Created at:&nbsp;{new Date(todo.createdAt).toLocaleDateString()}</p>
+				<ButtonsContainer>
+					{!todo.isCompleted && <CompletedButton 
+						onClick={() => onCompletedPressed(todo._id)}
+						>
+						Mark as completed
+					</CompletedButton>}
+					<RemoveButton 
+						onClick={() => onRemovedPressed(todo._id)}
+						>
+						Remove
+					</RemoveButton>
+				</ButtonsContainer>
+		</Container>
+	);
+};
 
 export default TodoListItem;
